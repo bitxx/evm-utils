@@ -1,0 +1,7 @@
+.idea
+*.iml
+tmp
+address.txt
+account.txt
+privatekey.txt
+go.sum
