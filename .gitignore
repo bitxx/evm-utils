@@ -5,3 +5,4 @@ address.txt
 account.txt
 privatekey.txt
 go.sum
+.DS_Store
