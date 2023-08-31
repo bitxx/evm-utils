@@ -2,6 +2,9 @@ package ethutil
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
 
 	"github.com/bitxx/ethutil/config"
 
@@ -106,7 +109,33 @@ func TestTokenTransfer(t *testing.T) {
 	t.Log("hash:", hash)
 }
 
-func TestBatchTokenTransfer(t *testing.T) {
+func TestBatchTokenTransferToManyAddress(t *testing.T) {
+	privateKey := ""
+	gasLimit := "21000"
+
+	bytes, err := os.ReadFile(addressFile)
+	require.Nil(t, err)
+	toAddresses := strings.Split(string(bytes), "\n")
+	client := MyClient()
+	total := 0
+	for i, toAddress := range toAddresses {
+		time.Sleep(1 * time.Second)
+		//transfer random token to each address, token number from 2 to 45
+		rValue := rand.Intn(45-2) + 2
+		total = total + rValue
+		value := strconv.Itoa(rValue) + "000000000000000000"
+		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
+		if err != nil {
+			t.Error(fmt.Sprintf("index:%d,toAddress: %s,error: %s", i, toAddress, err.Error()))
+			continue
+		}
+		t.Log(fmt.Sprintf("index: %d,toAddress: %s,hash: %s,value: %s", i, toAddress, hash, strings.Replace(value, "000000000000000000", "", 1)))
+	}
+	t.Log(fmt.Sprintf("transfer over,address count:%d,all token: %d", len(toAddresses), total))
+
+}
+
+func TestBatchTokenTransferToOneAddress(t *testing.T) {
 	toAddress := ""
 	value := "25000000000000000000000"
 	gasLimit := "21000"
