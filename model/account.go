@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
 	"github.com/tyler-smith/go-bip39"
+	"strings"
 )
 
 type Account struct {
@@ -68,7 +69,7 @@ func (a *Account) AccountInfoByMnemonic(mnemonic string) (account *Account, err 
 		PrivateKey: privateKey,
 		PublicKey:  publicKey,
 		Mnemonic:   mnemonic,
-		Address:    address,
+		Address:    strings.ToLower(address),
 	}
 	return
 }
@@ -89,7 +90,7 @@ func (a *Account) AccountWithPrivateKey(privateKey string) (account *Account, er
 		PrivateKey: privateKey,
 		PublicKey:  publicKey,
 		Mnemonic:   "",
-		Address:    address,
+		Address:    strings.ToLower(address),
 	}
 	return
 }

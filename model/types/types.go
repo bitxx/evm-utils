@@ -124,7 +124,7 @@ func (msg *CallMsg) TransferToTransaction() *Transaction {
 }
 
 type Transaction struct {
-	Nonce    string // nonce of sender account
+	Nonce    uint64 // nonce of sender account
 	GasPrice string // wei per gas
 	GasLimit string // gas limit
 	To       string // receiver
@@ -135,7 +135,7 @@ type Transaction struct {
 	MaxPriorityFeePerGas string
 }
 
-func NewTransaction(nonce, gasPrice, gasLimit, to, value, data string) *Transaction {
+func NewTransaction(nonce uint64, gasPrice, gasLimit, to, value, data string) *Transaction {
 	return &Transaction{nonce, gasPrice, gasLimit, to, value, data, ""}
 }
 
@@ -150,7 +150,7 @@ func NewTransactionFromHex(hexData string) (*Transaction, error) {
 		return nil, err
 	}
 	tx := NewTransaction(
-		strconv.Itoa(int(decodeTx.Nonce())),
+		decodeTx.Nonce(),
 		decodeTx.GasFeeCap().String(),
 		strconv.Itoa(int(decodeTx.Gas())),
 		decodeTx.To().String(),
@@ -197,11 +197,6 @@ func (tx *Transaction) GetRawTx() (*types.Transaction, error) {
 	if tx.MaxPriorityFeePerGas != "" {
 		if maxFeePerGas, valid = big.NewInt(0).SetString(tx.MaxPriorityFeePerGas, 10); !valid {
 			return nil, errors.New("invalid max priority fee per gas")
-		}
-	}
-	if tx.Nonce != "" {
-		if nonce, err = strconv.ParseUint(tx.Nonce, 10, 64); err != nil {
-			return nil, errors.New("invalid Nonce")
 		}
 	}
 	if tx.GasLimit != "" {

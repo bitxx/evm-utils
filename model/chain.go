@@ -136,14 +136,14 @@ func (c *Chain) EstimateGasLimit(msg *types.CallMsg) (gas string, err error) {
 	return gasString, nil
 }
 
-func (c *Chain) Nonce(spenderAddressHex string) (string, error) {
+func (c *Chain) Nonce(spenderAddressHex string) (uint64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.Timeout)*time.Second)
 	defer cancel()
 	nonce, err := c.RemoteRpcClient.PendingNonceAt(ctx, common.HexToAddress(spenderAddressHex))
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	return strconv.FormatUint(nonce, 10), nil
+	return nonce, nil
 }
 
 // BuildTxUnSign
@@ -155,13 +155,13 @@ func (c *Chain) Nonce(spenderAddressHex string) (string, error) {
 //	@return *eTypes.Transaction
 //	@return error
 func (c *Chain) BuildTxUnSign(address string, transaction *types.Transaction) (*eTypes.Transaction, error) {
-	if transaction.Nonce == "" || transaction.Nonce == "0" {
+	if transaction.Nonce <= 0 {
 		if !util.IsValidAddress(address) {
 			return nil, errors.New("address format is error")
 		}
 		nonce, err := c.Nonce(address)
 		if err != nil {
-			nonce = "0"
+			nonce = 0
 			err = nil
 		}
 		transaction.Nonce = nonce

@@ -41,7 +41,7 @@ func (t *Token) Transfer(privateKey, gasPrice, gasLimit, value, to, data string)
 	if gasPrice == "" || gasLimit == "" || to == "" || value == "" {
 		return "", errors.New("param is error")
 	}
-	tx := types.NewTransaction("", gasPrice, gasLimit, to, value, data)
+	tx := types.NewTransaction(0, gasPrice, gasLimit, to, value, data)
 
 	priData, err := util.HexDecodeString(privateKey)
 	if err != nil {

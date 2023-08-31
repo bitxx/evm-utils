@@ -63,10 +63,10 @@ func (o *EthClient) Chain() (*model.Chain, error) {
 	return model.GetChain(o.RpcUrl, o.timeout)
 }
 
-func (o *EthClient) Nonce(address string) (nonce string, err error) {
+func (o *EthClient) Nonce(address string) (nonce uint64, err error) {
 	chain, err := o.Chain()
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	return chain.Nonce(address)
 }
