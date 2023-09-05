@@ -31,7 +31,7 @@ func MyClient() *EthClient {
 }
 
 func TestAccountByMnemonic(t *testing.T) {
-	num := 200
+	num := 150
 	result := "account：\n"
 	addresses := "\n\n\nSummary of the above account addresses:"
 	privateKeys := "\n\n\nSummary of the above account privateKeys:"
@@ -40,7 +40,7 @@ func TestAccountByMnemonic(t *testing.T) {
 		account, _ := MyClient().AccountByMnemonic()
 		addresses = addresses + "\n" + account.Address
 		privateKeys = privateKeys + "\n" + account.PrivateKey
-		menmonics = menmonics + "\n" + account.PrivateKey
+		menmonics = menmonics + "\n" + account.Mnemonic
 		result = result + fmt.Sprintf("NO. %d group account：\nmnemonic：%s\naddress：%s\nprivateKey：%s\npublicKey：%s\n\n", i+1, account.Mnemonic, account.Address, account.PrivateKey, account.PublicKey)
 	}
 	result = result + addresses + privateKeys + menmonics
