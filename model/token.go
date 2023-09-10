@@ -37,7 +37,7 @@ func (t *Token) BalanceOf(address string) (balance string, err error) {
 	return balanceResult.String(), nil
 }
 
-func (t *Token) Transfer(privateKey, gasPrice, gasLimit, value, to, data string) (hash string, err error) {
+func (t *Token) Transfer(privateKey, gasPrice, gasLimit, value, to string, data []byte) (hash string, err error) {
 	if gasPrice == "" || gasLimit == "" || to == "" || value == "" {
 		return "", errors.New("param is error")
 	}
@@ -66,11 +66,14 @@ func (t *Token) Transfer(privateKey, gasPrice, gasLimit, value, to, data string)
 	return txSign.TxHex, t.chain.SendTx(txSign.SignedTx)
 }
 
-func (t *Token) EstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount string) (string, error) {
+func (t *Token) EstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount string, data []byte) (string, error) {
 	msg := types.NewCallMsg()
 	msg.SetFrom(fromAddress)
 	msg.SetTo(receiverAddress)
 	msg.SetGasPrice(gasPrice)
 	msg.SetValue(amount)
+	if data != nil {
+		msg.SetData(data)
+	}
 	return t.chain.EstimateGasLimit(msg)
 }

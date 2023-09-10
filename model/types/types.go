@@ -119,7 +119,8 @@ func (msg *CallMsg) TransferToTransaction() *Transaction {
 		GasLimit: msg.GetGasLimit(),
 		To:       msg.GetTo(),
 		Value:    msg.GetValue(),
-		Data:     msg.GetDataHex(),
+		//Data:     msg.GetDataHex(),
+		Data: msg.GetData(),
 	}
 }
 
@@ -129,13 +130,13 @@ type Transaction struct {
 	GasLimit string // gas limit
 	To       string // receiver
 	Value    string // wei amount
-	Data     string // contract invocation input data
+	Data     []byte // contract invocation input data
 
 	// EIP1559, Default is ""
 	MaxPriorityFeePerGas string
 }
 
-func NewTransaction(nonce uint64, gasPrice, gasLimit, to, value, data string) *Transaction {
+func NewTransaction(nonce uint64, gasPrice, gasLimit, to, value string, data []byte) *Transaction {
 	return &Transaction{nonce, gasPrice, gasLimit, to, value, data, ""}
 }
 
@@ -155,7 +156,8 @@ func NewTransactionFromHex(hexData string) (*Transaction, error) {
 		strconv.Itoa(int(decodeTx.Gas())),
 		decodeTx.To().String(),
 		decodeTx.Value().String(),
-		hex.EncodeToString(decodeTx.Data()))
+		decodeTx.Data())
+	//hex.EncodeToString(decodeTx.Data()))
 	// not equal, is eip1559; legacy feecap equal tipcap
 	if decodeTx.GasTipCap().Cmp(decodeTx.GasFeeCap()) != 0 {
 		tx.MaxPriorityFeePerGas = decodeTx.GasTipCap().String()
@@ -208,11 +210,11 @@ func (tx *Transaction) GetRawTx() (*types.Transaction, error) {
 		return nil, errors.New("invalid toAddress")
 	}
 	toAddress = common.HexToAddress(tx.To)
-	if tx.Data != "" {
+	/*if len(tx.Data) > 0 {
 		if data, err = util.HexDecodeString(tx.Data); err != nil {
 			return nil, errors.New("invalid data string")
 		}
-	}
+	}*/
 
 	if maxFeePerGas == nil || maxFeePerGas.Int64() == 0 {
 		// is legacy tx

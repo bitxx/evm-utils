@@ -50,13 +50,13 @@ func (o *EthClient) TokenBalanceOf(address string) (balance string, err error) {
 	return token.BalanceOf(address)
 }
 
-func (o *EthClient) TokenEstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount string) (balance string, err error) {
+func (o *EthClient) TokenEstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount string, data []byte) (balance string, err error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return "", err
 	}
 	token := model.NewToken(chain)
-	return token.EstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount)
+	return token.EstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount, data)
 }
 
 func (o *EthClient) Chain() (*model.Chain, error) {
@@ -71,7 +71,7 @@ func (o *EthClient) Nonce(address string) (nonce uint64, err error) {
 	return chain.Nonce(address)
 }
 
-func (o *EthClient) TokenTransfer(privateKey, gasPrice, gasLimit, value, to, data string) (hash string, err error) {
+func (o *EthClient) TokenTransfer(privateKey, gasPrice, gasLimit, value, to string, data []byte) (hash string, err error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return "", err
