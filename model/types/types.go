@@ -210,11 +210,12 @@ func (tx *Transaction) GetRawTx() (*types.Transaction, error) {
 		return nil, errors.New("invalid toAddress")
 	}
 	toAddress = common.HexToAddress(tx.To)
-	/*if len(tx.Data) > 0 {
-		if data, err = util.HexDecodeString(tx.Data); err != nil {
+	if tx.Data != nil {
+		/*if data, err = util.HexDecodeString(tx.Data); err != nil {
 			return nil, errors.New("invalid data string")
-		}
-	}*/
+		}*/
+		data = tx.Data
+	}
 
 	if maxFeePerGas == nil || maxFeePerGas.Int64() == 0 {
 		// is legacy tx
