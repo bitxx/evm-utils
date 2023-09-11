@@ -21,11 +21,11 @@ import (
 )
 
 const (
-	rpcUrl  = "https://alpha-us-http-geth.opside.network/"
+	rpcUrl  = "https://pre-alpha-us-http-geth.opside.network"
 	timeout = 60 //second
 
 	testAccountFromAddress           = "0x7a547A149A79A03F4dd441B6806ffCBb1b63F383"
-	testAccountFromAddressPrivateKey = ""
+	testAccountFromAddressPrivateKey = "1f9cea18b76799f950f1b920579ba44a0ebc65c56f8bcd740405efcc4cf11b0f"
 	testAccountToAddress             = "0x8B63293748e058F47a31c0D2Af0B1b3FeDdc4D4C"
 	accountFile                      = "./account.txt"
 	addressFile                      = "./address.txt"
@@ -108,12 +108,10 @@ func TestTokenEstimateGasLimit(t *testing.T) {
 }
 
 func TestTokenTransfer(t *testing.T) {
-	value := "13000000000000000000"
-	data := hexutils.HexToBytes("73c45c98000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000540000000000000000000000000000000000000000000000000de0b6b3a76400000000000000000000000000000000000000000000000000000000000000000014f9251c4ef894355d34d2a98a26e9d60b9d56d6bc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000008a688906bd8b00000000000000000000000000000000000000000000000000000")
-
-	gasLimit, err := MyClient().TokenEstimateGasLimit("0xf9251c4ef894355d34d2a98a26e9d60b9d56d6bc", "0xbd927011759b2c4f2602c3008f8ef3407db53473", config.DefaultEthGasPrice, value, data)
+	value := "1000000000000000000"
+	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEthGasPrice, value, nil)
 	require.Nil(t, err)
-	hash, err := MyClient().TokenTransfer("cfe211ce0489dce12e6cf204e720c25e01d654ada9d839df1727a59043287cbb", config.DefaultEthGasPrice, gasLimit, value, "0xbd927011759b2c4f2602c3008f8ef3407db53473", data)
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, value, testAccountToAddress, "")
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
@@ -133,7 +131,7 @@ func TestBatchTokenTransferToManyAddress(t *testing.T) {
 		rValue := rand.Intn(45-2) + 2
 		total = total + rValue
 		value := strconv.Itoa(rValue) + "000000000000000000"
-		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, nil)
+		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d,toAddress: %s,error: %s", i, toAddress, err.Error()))
 			continue
@@ -157,7 +155,7 @@ func TestBatchTokenTransferToOneAddress(t *testing.T) {
 		if len(privateKey) <= 0 {
 			continue
 		}
-		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, nil)
+		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d,privateKey: %s,error: %s", i, privateKey, err.Error()))
 			continue

@@ -119,24 +119,23 @@ func (msg *CallMsg) TransferToTransaction() *Transaction {
 		GasLimit: msg.GetGasLimit(),
 		To:       msg.GetTo(),
 		Value:    msg.GetValue(),
-		//Data:     msg.GetDataHex(),
-		Data: msg.GetData(),
+		Data:     msg.GetDataHex(),
 	}
 }
 
 type Transaction struct {
-	Nonce    uint64 // nonce of sender account
+	Nonce    string // nonce of sender account
 	GasPrice string // wei per gas
 	GasLimit string // gas limit
 	To       string // receiver
 	Value    string // wei amount
-	Data     []byte // contract invocation input data
+	Data     string // contract invocation input data
 
 	// EIP1559, Default is ""
 	MaxPriorityFeePerGas string
 }
 
-func NewTransaction(nonce uint64, gasPrice, gasLimit, to, value string, data []byte) *Transaction {
+func NewTransaction(nonce, gasPrice, gasLimit, to, value, data string) *Transaction {
 	return &Transaction{nonce, gasPrice, gasLimit, to, value, data, ""}
 }
 
@@ -151,13 +150,12 @@ func NewTransactionFromHex(hexData string) (*Transaction, error) {
 		return nil, err
 	}
 	tx := NewTransaction(
-		decodeTx.Nonce(),
+		strconv.Itoa(int(decodeTx.Nonce())),
 		decodeTx.GasFeeCap().String(),
 		strconv.Itoa(int(decodeTx.Gas())),
 		decodeTx.To().String(),
 		decodeTx.Value().String(),
-		decodeTx.Data())
-	//hex.EncodeToString(decodeTx.Data()))
+		hex.EncodeToString(decodeTx.Data()))
 	// not equal, is eip1559; legacy feecap equal tipcap
 	if decodeTx.GasTipCap().Cmp(decodeTx.GasFeeCap()) != 0 {
 		tx.MaxPriorityFeePerGas = decodeTx.GasTipCap().String()
@@ -201,6 +199,11 @@ func (tx *Transaction) GetRawTx() (*types.Transaction, error) {
 			return nil, errors.New("invalid max priority fee per gas")
 		}
 	}
+	if tx.Nonce != "" {
+		if nonce, err = strconv.ParseUint(tx.Nonce, 10, 64); err != nil {
+			return nil, errors.New("invalid Nonce")
+		}
+	}
 	if tx.GasLimit != "" {
 		if gasLimit, err = strconv.ParseUint(tx.GasLimit, 10, 64); err != nil {
 			return nil, errors.New("invalid gas limit")
@@ -210,11 +213,10 @@ func (tx *Transaction) GetRawTx() (*types.Transaction, error) {
 		return nil, errors.New("invalid toAddress")
 	}
 	toAddress = common.HexToAddress(tx.To)
-	if tx.Data != nil {
-		/*if data, err = util.HexDecodeString(tx.Data); err != nil {
+	if tx.Data != "" {
+		if data, err = util.HexDecodeString(tx.Data); err != nil {
 			return nil, errors.New("invalid data string")
-		}*/
-		data = tx.Data
+		}
 	}
 
 	if maxFeePerGas == nil || maxFeePerGas.Int64() == 0 {

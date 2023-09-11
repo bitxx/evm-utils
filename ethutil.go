@@ -82,7 +82,7 @@ func (o *EthClient) Nonce(address string) (nonce uint64, err error) {
 	return chain.Nonce(address)
 }
 
-func (o *EthClient) TokenTransfer(privateKey, gasPrice, gasLimit, value, to string, data []byte) (hash string, err error) {
+func (o *EthClient) TokenTransfer(privateKey, gasPrice, gasLimit, value, to, data string) (hash string, err error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return "", err

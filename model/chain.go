@@ -155,7 +155,7 @@ func (c *Chain) Nonce(spenderAddressHex string) (uint64, error) {
 //	@return *eTypes.Transaction
 //	@return error
 func (c *Chain) BuildTxUnSign(address string, transaction *types.Transaction) (*eTypes.Transaction, error) {
-	if transaction.Nonce <= 0 {
+	if transaction.Nonce == "" || transaction.Nonce == "0" {
 		if !util.IsValidAddress(address) {
 			return nil, errors.New("address format is error")
 		}
@@ -164,7 +164,7 @@ func (c *Chain) BuildTxUnSign(address string, transaction *types.Transaction) (*
 			nonce = 0
 			err = nil
 		}
-		transaction.Nonce = nonce
+		transaction.Nonce = strconv.FormatUint(nonce, 10)
 	}
 	return transaction.GetRawTx()
 }
@@ -173,6 +173,7 @@ func (c *Chain) BuildTxSign(privateKey *ecdsa.PrivateKey, txNoSign *eTypes.Trans
 	if privateKey == nil || txNoSign == nil {
 		return nil, errors.New("param is empty")
 	}
+
 	signedTx, err := eTypes.SignTx(txNoSign, eTypes.LatestSignerForChainID(c.chainId), privateKey)
 	if err != nil {
 		return nil, err
