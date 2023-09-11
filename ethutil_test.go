@@ -221,7 +221,7 @@ func TestMetamaskLoginSign(t *testing.T) {
 func TestSignEip721(t *testing.T) {
 	loginUrl := "https://opside.network/api/user/custom/login"
 	ethClient := NewSimpleEthClient()
-	privateKey := "b6bbda4df6047fdc812505f45ac8170c7d0a97a8a1a2c3ec7c74220d4a8e4860"
+	privateKey := ""
 	account, err := ethClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 	typedData := apitypes.TypedData{
