@@ -1,7 +1,10 @@
 package ethutil
 
 import (
+	"errors"
 	"github.com/bitxx/ethutil/model"
+	"github.com/bitxx/ethutil/util/signutil"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 type EthClient struct {
@@ -20,6 +23,14 @@ func NewEthClient(rpcUrl string, timeout int64) *EthClient {
 		RpcUrl:  rpcUrl,
 		timeout: timeout,
 	}
+}
+
+// NewSimpleEthClient
+//
+//	@Description: not support connect to the node
+//	@return *EthClient
+func NewSimpleEthClient() *EthClient {
+	return &EthClient{}
 }
 
 func (o *EthClient) AccountByMnemonic() (account *model.Account, err error) {
@@ -78,4 +89,34 @@ func (o *EthClient) TokenTransfer(privateKey, gasPrice, gasLimit, value, to stri
 	}
 	token := model.NewToken(chain)
 	return token.Transfer(privateKey, gasPrice, gasLimit, value, to, data)
+}
+
+// MetamaskSignLogin
+//
+//	@Description: metamask sign login
+//	@receiver o
+//	@param message
+//	@param privateKey
+//	@return string
+//	@return error
+func (o *EthClient) MetamaskSignLogin(message, privateKey string) (string, error) {
+	if message == "" || privateKey == "" {
+		return "", errors.New("param is empty")
+	}
+	return signutil.MetamaskSignLogin(message, privateKey)
+}
+
+// SignEip721
+//
+//	@Description: eip721 sign
+//	@receiver o
+//	@param privateKey
+//	@param typedData
+//	@return string
+//	@return error
+func (o *EthClient) SignEip721(privateKey string, typedData *apitypes.TypedData) (string, error) {
+	if typedData == nil || privateKey == "" {
+		return "", errors.New("param is empty")
+	}
+	return signutil.SignEip721(privateKey, typedData)
 }
