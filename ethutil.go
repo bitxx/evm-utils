@@ -61,6 +61,17 @@ func (o *EthClient) TokenBalanceOf(address string) (balance string, err error) {
 	return token.BalanceOf(address)
 }
 
+// TokenEstimateGasLimit
+//
+//	@Description: 估算gas ，如果是合约地址，data肯定不得为空
+//	@receiver o
+//	@param fromAddress
+//	@param receiverAddress
+//	@param gasPrice
+//	@param amount
+//	@param data
+//	@return balance
+//	@return err
 func (o *EthClient) TokenEstimateGasLimit(fromAddress, receiverAddress, gasPrice, amount string, data []byte) (balance string, err error) {
 	chain, err := o.Chain()
 	if err != nil {
