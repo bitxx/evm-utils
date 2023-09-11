@@ -1,11 +1,12 @@
 module github.com/bitxx/ethutil
 
-go 1.20
+go 1.21
 
 require (
 	github.com/ethereum/go-ethereum v1.10.22
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/mojocn/base64Captcha v1.3.5
+	github.com/status-im/keycard-go v0.0.0-20190316090335-8537d3370df4
 	github.com/storyicon/sigverify v1.1.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tyler-smith/go-bip39 v1.1.0
