@@ -170,10 +170,10 @@ func TestBatchTokenTransferToOneAddress(t *testing.T) {
 		}
 		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
 		if err != nil {
-			t.Error(fmt.Sprintf("index:%d,privateKey: %s,error: %s", i, privateKey, err.Error()))
+			t.Error(fmt.Sprintf("index:%d, error: %s", i, err.Error()))
 			continue
 		}
-		t.Log(fmt.Sprintf("index: %d,privateKey: %s,hash: %s", i, privateKey, hash))
+		t.Log(fmt.Sprintf("index: %d,hash: %s", i, hash))
 	}
 }
 
