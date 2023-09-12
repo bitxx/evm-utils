@@ -129,7 +129,7 @@ func TestTokenTransferWithContract(t *testing.T) {
 	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, contractAddress, config.DefaultEthGasPrice, value, hexutils.HexToBytes(data))
 	require.Nil(t, err)
 
-	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, "", value, contractAddress, data)
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, "1200000000000", value, contractAddress, data)
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
