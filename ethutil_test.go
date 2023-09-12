@@ -113,7 +113,7 @@ func TestTokenTransfer(t *testing.T) {
 	value := "1000000000000000000"
 	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEthGasPrice, value, nil)
 	require.Nil(t, err)
-	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, value, testAccountToAddress, "")
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, "", value, testAccountToAddress, "")
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
@@ -129,7 +129,7 @@ func TestTokenTransferWithContract(t *testing.T) {
 	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, contractAddress, config.DefaultEthGasPrice, value, hexutils.HexToBytes(data))
 	require.Nil(t, err)
 
-	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, value, contractAddress, data)
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, config.DefaultEthGasPrice, gasLimit, "", value, contractAddress, data)
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
@@ -149,7 +149,7 @@ func TestBatchTokenTransferToManyAddress(t *testing.T) {
 		rValue := rand.Intn(45-2) + 2
 		total = total + rValue
 		value := strconv.Itoa(rValue) + "000000000000000000"
-		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
+		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, "", value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d,toAddress: %s,error: %s", i, toAddress, err.Error()))
 			continue
@@ -173,7 +173,7 @@ func TestBatchTokenTransferToOneAddress(t *testing.T) {
 		if len(privateKey) <= 0 {
 			continue
 		}
-		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, value, toAddress, "")
+		hash, err := client.TokenTransfer(privateKey, config.DefaultEthGasPrice, gasLimit, "", value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d, error: %s", i, err.Error()))
 			continue

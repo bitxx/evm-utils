@@ -135,8 +135,8 @@ type Transaction struct {
 	MaxPriorityFeePerGas string
 }
 
-func NewTransaction(nonce, gasPrice, gasLimit, to, value, data string) *Transaction {
-	return &Transaction{nonce, gasPrice, gasLimit, to, value, data, ""}
+func NewTransaction(nonce, gasPrice, gasLimit, maxPriorityFeePerGas, to, value, data string) *Transaction {
+	return &Transaction{nonce, gasPrice, gasLimit, to, value, data, maxPriorityFeePerGas}
 }
 
 func NewTransactionFromHex(hexData string) (*Transaction, error) {
@@ -153,9 +153,11 @@ func NewTransactionFromHex(hexData string) (*Transaction, error) {
 		strconv.Itoa(int(decodeTx.Nonce())),
 		decodeTx.GasFeeCap().String(),
 		strconv.Itoa(int(decodeTx.Gas())),
+		"",
 		decodeTx.To().String(),
 		decodeTx.Value().String(),
-		hex.EncodeToString(decodeTx.Data()))
+		hex.EncodeToString(decodeTx.Data()),
+	)
 	// not equal, is eip1559; legacy feecap equal tipcap
 	if decodeTx.GasTipCap().Cmp(decodeTx.GasFeeCap()) != 0 {
 		tx.MaxPriorityFeePerGas = decodeTx.GasTipCap().String()
