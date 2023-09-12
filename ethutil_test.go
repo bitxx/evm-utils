@@ -1,3 +1,6 @@
+// Package ethutil
+// @Description: 基于opside当前公开接口调试,于2023-09-12测试均通过，私钥等，均为测试使用
+
 package ethutil
 
 import (
