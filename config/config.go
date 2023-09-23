@@ -4,8 +4,8 @@ package config
 const (
 	DefaultContractGasLimit     = "63000"
 	DefaultEthGasLimit          = "21000"
-	DefaultEthGasPrice          = "1300000000000" // 当前网络 standard gas price
-	DefaultMaxPriorityFeePerGas = "125000000000"  // 当前网络 standard gas price
+	DefaultEthGasPrice          = "50000000000"  // 当前网络 standard gas price
+	DefaultMaxPriorityFeePerGas = "125000000000" // 当前网络 standard gas price eip1159
 
 	GasFactor = 1.8
 )
