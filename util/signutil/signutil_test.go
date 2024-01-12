@@ -3,10 +3,10 @@ package signutil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bitxx/ethutil"
-	"github.com/bitxx/ethutil/util/dateutil"
-	"github.com/bitxx/ethutil/util/httputil"
-	"github.com/bitxx/ethutil/util/idgenutil"
+	evmutils "github.com/bitxx/evm-utils"
+	"github.com/bitxx/evm-utils/util/dateutil"
+	"github.com/bitxx/evm-utils/util/httputil"
+	"github.com/bitxx/evm-utils/util/idgenutil"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/stretchr/testify/require"
 	"strconv"
@@ -16,7 +16,7 @@ import (
 
 func TestSignEip721(t *testing.T) {
 	loginUrl := "https://opside.network/api/user/custom/login"
-	ethClient := ethutil.NewEthClient("", 0)
+	ethClient := evmutils.NewEthClient("", 0)
 	privateKey := ""
 	account, err := ethClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
@@ -79,7 +79,7 @@ func TestMetamaskLoginSign(t *testing.T) {
 	url := "https://graphigo.prd.galaxy.eco/query"
 	privateKey := ""
 	//1. 获取账户
-	ethClient := ethutil.NewEthClient("", 0)
+	ethClient := evmutils.NewEthClient("", 0)
 	account, err := ethClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 

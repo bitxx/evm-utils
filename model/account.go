@@ -2,7 +2,7 @@ package model
 
 import (
 	"encoding/hex"
-	"github.com/bitxx/ethutil/util"
+	"github.com/bitxx/evm-utils/util"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"

@@ -3,8 +3,8 @@ package model
 import (
 	"context"
 	"errors"
-	"github.com/bitxx/ethutil/model/types"
-	"github.com/bitxx/ethutil/util"
+	"github.com/bitxx/evm-utils/model/types"
+	"github.com/bitxx/evm-utils/util"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"time"

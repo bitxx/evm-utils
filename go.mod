@@ -1,4 +1,4 @@
-module github.com/bitxx/ethutil
+module github.com/bitxx/evm-utils
 
 go 1.21
 

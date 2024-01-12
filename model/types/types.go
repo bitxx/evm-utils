@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/hex"
 	"errors"
-	"github.com/bitxx/ethutil/util"
+	"github.com/bitxx/evm-utils/util"
 	"github.com/ethereum/go-ethereum"
 	"math/big"
 	"strconv"

@@ -1,21 +1,21 @@
-// Package ethutil
+// Package evmutils
 // @Description: 基于opside当前公开接口调试,于2023-09-12测试均通过，私钥等，均为测试使用
 
-package ethutil
+package evmutils
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bitxx/ethutil/util/dateutil"
-	"github.com/bitxx/ethutil/util/httputil"
-	"github.com/bitxx/ethutil/util/idgenutil"
+	"github.com/bitxx/evm-utils/util/dateutil"
+	"github.com/bitxx/evm-utils/util/httputil"
+	"github.com/bitxx/evm-utils/util/idgenutil"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/status-im/keycard-go/hexutils"
 	"math/rand"
 	"strconv"
 	"time"
 
-	"github.com/bitxx/ethutil/config"
+	"github.com/bitxx/evm-utils/config"
 
 	"github.com/stretchr/testify/require"
 	"os"

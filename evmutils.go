@@ -1,9 +1,9 @@
-package ethutil
+package evmutils
 
 import (
 	"errors"
-	"github.com/bitxx/ethutil/model"
-	"github.com/bitxx/ethutil/util/signutil"
+	"github.com/bitxx/evm-utils/model"
+	"github.com/bitxx/evm-utils/util/signutil"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
