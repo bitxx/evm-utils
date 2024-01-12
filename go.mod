@@ -1,6 +1,6 @@
 module github.com/bitxx/evm-utils
 
-go 1.21
+go 1.21.5
 
 require (
 	github.com/ethereum/go-ethereum v1.10.22
