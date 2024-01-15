@@ -102,6 +102,21 @@ func (o *EthClient) TokenTransfer(privateKey, nonce, gasPrice, gasLimit, maxPrio
 	return token.Transfer(privateKey, nonce, gasPrice, gasLimit, maxPriorityFeePerGas, value, to, data)
 }
 
+// Transactions
+//
+//	@Description:  获取一个块的交易记录
+//	@receiver o
+//	@param number
+//	@return err
+func (o *EthClient) Transactions(number uint64) (err error) {
+	chain, err := o.Chain()
+	if err != nil {
+		return err
+	}
+	transaction := model.NewTransaction(chain)
+	return transaction.Transactions(number)
+}
+
 // MetamaskSignLogin
 //
 //	@Description: metamask sign login

@@ -24,7 +24,8 @@ import (
 )
 
 const (
-	rpcUrl  = "https://pre-alpha-us-http-geth.opside.network"
+	//rpcUrl  = "https://pre-alpha-us-http-geth.opside.network"
+	rpcUrl  = "https://rpc.zkfair.io"
 	timeout = 60 //second
 
 	testAccountFromAddress           = "0x7a547A149A79A03F4dd441B6806ffCBb1b63F383"
@@ -297,4 +298,9 @@ func TestSignEip721(t *testing.T) {
 		t.Error("result is error")
 	}
 	t.Log("token: ", token)
+}
+
+func TestTransactions(t *testing.T) {
+	err := MyClient().Transactions(6301626)
+	require.Nil(t, err)
 }
