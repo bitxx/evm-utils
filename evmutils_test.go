@@ -301,6 +301,11 @@ func TestSignEip721(t *testing.T) {
 }
 
 func TestTransactions(t *testing.T) {
-	err := MyClient().Transactions(6301626)
+	transactions, err := MyClient().TransactionsByBlockNum(6301626)
 	require.Nil(t, err)
+	for idx, transaction := range transactions {
+		ts, err := transaction.MarshalJSON()
+		require.Nil(t, err)
+		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(ts)))
+	}
 }
