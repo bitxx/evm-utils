@@ -304,8 +304,8 @@ func TestTransactions(t *testing.T) {
 	transactions, err := MyClient().TransactionsByBlockNum(6301626)
 	require.Nil(t, err)
 	for idx, transaction := range transactions {
-		ts, err := transaction.MarshalJSON()
+		tx, err := json.Marshal(transaction)
 		require.Nil(t, err)
-		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(ts)))
+		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(tx)))
 	}
 }

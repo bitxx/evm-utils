@@ -6,6 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.11
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.2
 	github.com/mojocn/base64Captcha v1.3.5
+	github.com/shopspring/decimal v1.3.1
 	github.com/status-im/keycard-go v0.2.0
 	github.com/storyicon/sigverify v1.1.0
 	github.com/stretchr/testify v1.8.4

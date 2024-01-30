@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/bitxx/evm-utils/model"
 	"github.com/bitxx/evm-utils/util/signutil"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
@@ -108,15 +107,15 @@ func (o *EthClient) TokenTransfer(privateKey, nonce, gasPrice, gasLimit, maxPrio
 //	@Description: 获取一个块的所有交易
 //	@receiver o
 //	@param number
-//	@return types.TransactionsByBlockNum
+//	@return []model.Transaction
 //	@return error
-func (o *EthClient) TransactionsByBlockNum(number uint64) (types.Transactions, error) {
+func (o *EthClient) TransactionsByBlockNum(number uint64) ([]model.Transaction, error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return nil, err
 	}
 	transaction := model.NewTransaction(chain)
-	return transaction.TransactionsByBlockNum(number)
+	return transaction.TransactionsByBlockNumber(number)
 }
 
 // MetamaskSignLogin
