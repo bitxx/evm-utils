@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/bitxx/evm-utils/model"
 	"github.com/bitxx/evm-utils/util/signutil"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
@@ -102,20 +103,36 @@ func (o *EthClient) TokenTransfer(privateKey, nonce, gasPrice, gasLimit, maxPrio
 	return token.Transfer(privateKey, nonce, gasPrice, gasLimit, maxPriorityFeePerGas, value, to, data)
 }
 
-// TransactionsByBlockNum
+// TransactionsByBlockNumber
 //
 //	@Description: 获取一个块的所有交易
 //	@receiver o
 //	@param number
 //	@return []model.Transaction
 //	@return error
-func (o *EthClient) TransactionsByBlockNum(number uint64) ([]model.Transaction, error) {
+func (o *EthClient) TransactionsByBlockNumber(number uint64) ([]model.Transaction, error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return nil, err
 	}
 	transaction := model.NewTransaction(chain)
 	return transaction.TransactionsByBlockNumber(number)
+}
+
+// BlockByNumber
+//
+//	@Description: 读取一个块
+//	@receiver o
+//	@param number 如果number<=0，则读取最新块
+//	@return *types.Block
+//	@return error
+func (o *EthClient) BlockByNumber(number uint64) (*types.Block, error) {
+	chain, err := o.Chain()
+	if err != nil {
+		return nil, err
+	}
+	transaction := model.NewTransaction(chain)
+	return transaction.BlockByNumber(number)
 }
 
 // MetamaskSignLogin
