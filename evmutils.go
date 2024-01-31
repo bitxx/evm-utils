@@ -135,6 +135,21 @@ func (o *EthClient) BlockByNumber(number uint64) (*types.Block, error) {
 	return transaction.BlockByNumber(number)
 }
 
+// LatestBlockNumber
+//
+//	@Description: 获取最新块
+//	@receiver o
+//	@return uint64
+//	@return error
+func (o *EthClient) LatestBlockNumber() (uint64, error) {
+	chain, err := o.Chain()
+	if err != nil {
+		return 0, err
+	}
+	transaction := model.NewTransaction(chain)
+	return transaction.LatestBlockNumber()
+}
+
 // MetamaskSignLogin
 //
 //	@Description: metamask sign login

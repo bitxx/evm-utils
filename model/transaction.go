@@ -52,6 +52,18 @@ func (t *Transaction) BlockByNumber(number uint64) (*types.Block, error) {
 	return t.chain.RemoteRpcClient.BlockByNumber(ctx, new(big.Int).SetUint64(number))
 }
 
+// LatestBlockNumber
+//
+//	@Description: 获取最新块高度
+//	@receiver t
+//	@return uint64
+//	@return error
+func (t *Transaction) LatestBlockNumber() (uint64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t.chain.Timeout)*time.Second)
+	defer cancel()
+	return t.chain.RemoteRpcClient.BlockNumber(ctx)
+}
+
 // TransactionsByBlockNumber
 //
 //	@Description: 获取一个块的交易

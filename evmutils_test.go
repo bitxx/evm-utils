@@ -319,3 +319,9 @@ func TestBlock(t *testing.T) {
 		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(tx)))
 	}
 }
+
+func TestLatestBlockNumber(t *testing.T) {
+	number, err := MyClient().LatestBlockNumber()
+	require.Nil(t, err)
+	t.Log(number)
+}
