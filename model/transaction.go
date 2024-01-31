@@ -24,7 +24,7 @@ type Transaction struct {
 	GasTipCap decimal.Decimal
 	To        string
 	From      string
-	Time      time.Time
+	Time      uint64
 	//TODO blobs待定
 
 	chain *Chain
@@ -66,7 +66,6 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 	}
 	var transactions []Transaction
 	for _, tx := range block.Transactions() {
-		tx.MarshalJSON()
 		var signer types.Signer
 		switch {
 		case tx.Type() == types.AccessListTxType:
@@ -96,7 +95,7 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 			GasTipCap: decimal.NewFromBigInt(tx.GasTipCap(), 0),
 			To:        tx.To().String(),
 			From:      from.String(),
-			Time:      tx.Time(),
+			Time:      block.Time(),
 		}
 		transactions = append(transactions, transaction)
 	}
