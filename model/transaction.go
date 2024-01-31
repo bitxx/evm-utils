@@ -92,6 +92,11 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 			return nil, err
 		}
 
+		to := ""
+		if tx.To() != nil {
+			to = tx.To().String()
+		}
+
 		transaction := Transaction{
 			Hash:      tx.Hash().String(),
 			Protected: tx.Protected(),
@@ -105,7 +110,7 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 			Cost:      decimal.NewFromBigInt(tx.Cost(), 0),
 			GasFeeCap: decimal.NewFromBigInt(tx.GasFeeCap(), 0),
 			GasTipCap: decimal.NewFromBigInt(tx.GasTipCap(), 0),
-			To:        tx.To().String(),
+			To:        to,
 			From:      from.String(),
 			Time:      block.Time(),
 		}
