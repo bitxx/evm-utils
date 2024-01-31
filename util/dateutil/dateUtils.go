@@ -24,6 +24,10 @@ func EndTimeNum(param time.Time) time.Time {
 	return time.Unix(t.Unix()+86399, 999)
 }
 
+func ParseTimestampToTime(timestamp int64) time.Time {
+	return time.Unix(timestamp, 0).Local()
+}
+
 func ParseTimestrToTimestamp(timeStr string, flag int) int64 {
 	var t int64
 	loc, _ := time.LoadLocation("Local")
