@@ -301,7 +301,7 @@ func TestSignEip721(t *testing.T) {
 }
 
 func TestTransactions(t *testing.T) {
-	transactions, err := MyClient().TransactionsByBlockNumber(6301626)
+	transactions, err := MyClient().TransactionsByBlockNumber(6860001)
 	require.Nil(t, err)
 	for idx, transaction := range transactions {
 		tx, err := json.Marshal(transaction)
@@ -311,7 +311,7 @@ func TestTransactions(t *testing.T) {
 }
 
 func TestBlock(t *testing.T) {
-	block, err := MyClient().BlockByNumber(6301626)
+	block, err := MyClient().BlockByNumber(6860001)
 	require.Nil(t, err)
 	for idx, transaction := range block.Transactions() {
 		tx, err := transaction.MarshalJSON()

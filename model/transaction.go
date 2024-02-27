@@ -19,6 +19,7 @@ type Transaction struct {
 	GasPrice  decimal.Decimal
 	Type      string
 	ChainId   decimal.Decimal
+	Gas       uint64
 	Cost      decimal.Decimal
 	GasFeeCap decimal.Decimal
 	GasTipCap decimal.Decimal
@@ -96,13 +97,13 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 		if tx.To() != nil {
 			to = tx.To().String()
 		}
-
 		transaction := Transaction{
 			Hash:      tx.Hash().String(),
 			Protected: tx.Protected(),
 			Nonce:     tx.Nonce(),
 			Data:      tx.Data(),
 			Size:      tx.Size(),
+			Gas:       tx.Gas(),
 			Value:     decimal.NewFromBigInt(tx.Value(), 0),
 			GasPrice:  decimal.NewFromBigInt(tx.GasPrice(), 0),
 			Type:      strconv.Itoa(int(tx.Type())),
