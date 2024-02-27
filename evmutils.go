@@ -103,20 +103,20 @@ func (o *EthClient) TokenTransfer(privateKey, nonce, gasPrice, gasLimit, maxPrio
 	return token.Transfer(privateKey, nonce, gasPrice, gasLimit, maxPriorityFeePerGas, value, to, data)
 }
 
-// TransactionsByBlockNumber
+// TxReceiptByBlockNumber
 //
 //	@Description: 获取一个块的所有交易
 //	@receiver o
 //	@param number
 //	@return []model.Transaction
 //	@return error
-func (o *EthClient) TransactionsByBlockNumber(number uint64) ([]model.Transaction, error) {
+func (o *EthClient) TxReceiptByBlockNumber(number uint64) ([]model.Transaction, error) {
 	chain, err := o.Chain()
 	if err != nil {
 		return nil, err
 	}
 	transaction := model.NewTransaction(chain)
-	return transaction.TransactionsByBlockNumber(number)
+	return transaction.TxReceiptByBlockNumber(number)
 }
 
 // BlockByNumber
@@ -133,6 +133,38 @@ func (o *EthClient) BlockByNumber(number uint64) (*types.Block, error) {
 	}
 	transaction := model.NewTransaction(chain)
 	return transaction.BlockByNumber(number)
+}
+
+// BlockReceiptsByNumber
+//
+//	@Description: 读取一个块所有交易的回执
+//	@receiver o
+//	@param number
+//	@return []*types.Receipt
+//	@return error
+func (o *EthClient) BlockReceiptsByNumber(number uint64) ([]*types.Receipt, error) {
+	chain, err := o.Chain()
+	if err != nil {
+		return nil, err
+	}
+	transaction := model.NewTransaction(chain)
+	return transaction.BlockReceiptsByNumber(number)
+}
+
+// TxReceipt
+//
+//	@Description: 根据hash获取交易回执
+//	@receiver o
+//	@param hash
+//	@return *types.Receipt
+//	@return error
+func (o *EthClient) TxReceipt(hash string) (*types.Receipt, error) {
+	chain, err := o.Chain()
+	if err != nil {
+		return nil, err
+	}
+	transaction := model.NewTransaction(chain)
+	return transaction.TxReceipt(hash)
 }
 
 // LatestBlockNumber

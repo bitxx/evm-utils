@@ -2,7 +2,9 @@ package model
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/shopspring/decimal"
 	"math/big"
 	"strconv"
@@ -10,22 +12,31 @@ import (
 )
 
 type Transaction struct {
-	Hash      string
-	Protected bool
-	Nonce     uint64
-	Data      []byte
-	Size      uint64
-	Value     decimal.Decimal
-	GasPrice  decimal.Decimal
-	Type      string
-	ChainId   decimal.Decimal
-	Gas       uint64
-	Cost      decimal.Decimal
-	GasFeeCap decimal.Decimal
-	GasTipCap decimal.Decimal
-	To        string
-	From      string
-	Time      uint64
+	Hash              string
+	Protected         bool
+	Nonce             uint64
+	Data              []byte
+	Size              uint64
+	Value             decimal.Decimal
+	GasPrice          decimal.Decimal
+	Type              string
+	ChainId           decimal.Decimal
+	Gas               uint64
+	Cost              decimal.Decimal
+	GasFeeCap         decimal.Decimal
+	GasTipCap         decimal.Decimal
+	To                string
+	From              string
+	Time              uint64
+	GasUsed           uint64
+	CumulativeGasUsed uint64
+	ReceiptStatus     uint64
+	EffectiveGasPrice decimal.Decimal
+	BlobGasUsed       uint64
+	BlobGasPrice      decimal.Decimal
+	TransactionIndex  uint
+	ContractAddress   string
+
 	//TODO blobs待定
 
 	chain *Chain
@@ -53,6 +64,36 @@ func (t *Transaction) BlockByNumber(number uint64) (*types.Block, error) {
 	return t.chain.RemoteRpcClient.BlockByNumber(ctx, new(big.Int).SetUint64(number))
 }
 
+// BlockReceiptsByNumber
+//
+//	@Description: 读取一个块交易的回执
+//	@receiver t
+//	@param number
+//	@return []*types.Receipt
+//	@return error
+func (t *Transaction) BlockReceiptsByNumber(number uint64) ([]*types.Receipt, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t.chain.Timeout)*time.Second)
+	defer cancel()
+	if number <= 0 {
+		return t.chain.RemoteRpcClient.BlockReceipts(ctx, rpc.BlockNumberOrHash{})
+	}
+	n := rpc.BlockNumber(1)
+	return t.chain.RemoteRpcClient.BlockReceipts(ctx, rpc.BlockNumberOrHash{BlockNumber: &n, RequireCanonical: false})
+}
+
+// TxReceipt
+//
+//	@Description: 根据hash获取交易记录回执
+//	@receiver t
+//	@param hash
+//	@return *types.Receipt
+//	@return error
+func (t *Transaction) TxReceipt(hash string) (*types.Receipt, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t.chain.Timeout)*time.Second)
+	defer cancel()
+	return t.chain.RemoteRpcClient.TransactionReceipt(ctx, common.HexToHash(hash))
+}
+
 // LatestBlockNumber
 //
 //	@Description: 获取最新块高度
@@ -65,20 +106,28 @@ func (t *Transaction) LatestBlockNumber() (uint64, error) {
 	return t.chain.RemoteRpcClient.BlockNumber(ctx)
 }
 
-// TransactionsByBlockNumber
+// TxReceiptByBlockNumber
 //
 //	@Description: 获取一个块的交易
 //	@receiver t
 //	@param number
 //	@return []Transaction
 //	@return error
-func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, error) {
+func (t *Transaction) TxReceiptByBlockNumber(number uint64) ([]Transaction, error) {
 	block, err := t.BlockByNumber(number)
 	if err != nil {
 		return nil, err
 	}
 	var transactions []Transaction
 	for _, tx := range block.Transactions() {
+		if tx.Hash().Hex() == "" {
+			continue
+		}
+		receipt, err := t.TxReceipt(tx.Hash().Hex())
+		if err != nil {
+			return nil, err
+		}
+
 		var signer types.Signer
 		switch {
 		case tx.Type() == types.AccessListTxType:
@@ -97,23 +146,41 @@ func (t *Transaction) TransactionsByBlockNumber(number uint64) ([]Transaction, e
 		if tx.To() != nil {
 			to = tx.To().String()
 		}
+
+		effectiveGasPrice := receipt.EffectiveGasPrice
+		if effectiveGasPrice == nil {
+			effectiveGasPrice = big.NewInt(0)
+		}
+
+		blobGasPrice := receipt.BlobGasPrice
+		if blobGasPrice == nil {
+			blobGasPrice = big.NewInt(0)
+		}
 		transaction := Transaction{
-			Hash:      tx.Hash().String(),
-			Protected: tx.Protected(),
-			Nonce:     tx.Nonce(),
-			Data:      tx.Data(),
-			Size:      tx.Size(),
-			Gas:       tx.Gas(),
-			Value:     decimal.NewFromBigInt(tx.Value(), 0),
-			GasPrice:  decimal.NewFromBigInt(tx.GasPrice(), 0),
-			Type:      strconv.Itoa(int(tx.Type())),
-			ChainId:   decimal.NewFromBigInt(tx.ChainId(), 0),
-			Cost:      decimal.NewFromBigInt(tx.Cost(), 0),
-			GasFeeCap: decimal.NewFromBigInt(tx.GasFeeCap(), 0),
-			GasTipCap: decimal.NewFromBigInt(tx.GasTipCap(), 0),
-			To:        to,
-			From:      from.String(),
-			Time:      block.Time(),
+			Hash:              tx.Hash().String(),
+			Protected:         tx.Protected(),
+			Nonce:             tx.Nonce(),
+			Data:              tx.Data(),
+			Size:              tx.Size(),
+			Gas:               tx.Gas(),
+			Value:             decimal.NewFromBigInt(tx.Value(), 0),
+			GasPrice:          decimal.NewFromBigInt(tx.GasPrice(), 0),
+			Type:              strconv.Itoa(int(tx.Type())),
+			ChainId:           decimal.NewFromBigInt(tx.ChainId(), 0),
+			Cost:              decimal.NewFromBigInt(tx.Cost(), 0),
+			GasFeeCap:         decimal.NewFromBigInt(tx.GasFeeCap(), 0),
+			GasTipCap:         decimal.NewFromBigInt(tx.GasTipCap(), 0),
+			To:                to,
+			From:              from.String(),
+			Time:              block.Time(),
+			GasUsed:           receipt.GasUsed,
+			CumulativeGasUsed: receipt.CumulativeGasUsed,
+			ReceiptStatus:     receipt.Status,
+			EffectiveGasPrice: decimal.NewFromBigInt(effectiveGasPrice, 0),
+			BlobGasUsed:       receipt.BlobGasUsed,
+			BlobGasPrice:      decimal.NewFromBigInt(blobGasPrice, 0),
+			TransactionIndex:  receipt.TransactionIndex,
+			ContractAddress:   receipt.ContractAddress.Hex(),
 		}
 		transactions = append(transactions, transaction)
 	}

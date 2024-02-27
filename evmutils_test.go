@@ -301,7 +301,7 @@ func TestSignEip721(t *testing.T) {
 }
 
 func TestTransactions(t *testing.T) {
-	transactions, err := MyClient().TransactionsByBlockNumber(6301626)
+	transactions, err := MyClient().TxReceiptByBlockNumber(1)
 	require.Nil(t, err)
 	for idx, transaction := range transactions {
 		tx, err := json.Marshal(transaction)
@@ -324,4 +324,19 @@ func TestLatestBlockNumber(t *testing.T) {
 	number, err := MyClient().LatestBlockNumber()
 	require.Nil(t, err)
 	t.Log(number)
+}
+
+func TestBlockReceipts(t *testing.T) {
+	recipts, err := MyClient().BlockReceiptsByNumber(1)
+	require.Nil(t, err)
+	for idx, recipt := range recipts {
+		require.Nil(t, err)
+		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, recipt.TxHash))
+	}
+}
+
+func TestTxReceipt(t *testing.T) {
+	recipt, err := MyClient().TxReceipt("0xb63c2503a348b2a501d89efbd519ff73d23de8b1886ad1b747faf6744d00cd98")
+	require.Nil(t, err)
+	t.Log(fmt.Sprintf("result: %s", recipt.TxHash))
 }
