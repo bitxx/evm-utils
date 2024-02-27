@@ -50,23 +50,26 @@ func ParseTimestrToTimestamp(timeStr string, flag int) int64 {
 	return t
 }
 
-func ParseTimestrToTime(timeStr string, flag int) time.Time {
-	//loc, _ := time.LoadLocation("Local")
-	if flag == 1 {
-		t1, _ := time.Parse("2006.01.02 15:04:05", timeStr)
-		return t1
-	} else if flag == 2 {
-		t1, _ := time.Parse("2006-01-02 15:04", timeStr)
-		return t1
-	} else if flag == 3 {
-		t1, _ := time.Parse("2006-01-02", timeStr)
-		return t1
-	} else if flag == 4 {
-		t1, _ := time.Parse("2006.01.02", timeStr)
-		return t1
+func ParseStrToTime(timeStr, location string, flag int) (time.Time, error) {
+	if location == "" {
+		location = "Local"
 	}
-	t1, _ := time.Parse("2006-01-02 15:04:05", timeStr)
-	return t1
+	loc, err := time.LoadLocation(location)
+	if err != nil {
+		return time.Time{}, err
+	}
+	switch flag {
+	case 1:
+		return time.ParseInLocation("2006.01.02 15:04:05", timeStr, loc)
+	case 2:
+		return time.ParseInLocation("2006-01-02 15:04", timeStr, loc)
+	case 3:
+		return time.ParseInLocation("2006-01-02", timeStr, loc)
+	case 4:
+		return time.ParseInLocation("2006.01.02", timeStr, loc)
+	default:
+		return time.ParseInLocation("2006-01-02 15:04:05", timeStr, loc)
+	}
 }
 
 // ConvertToStrByPrt
