@@ -24,30 +24,48 @@ func EndTimeNum(param time.Time) time.Time {
 	return time.Unix(t.Unix()+86399, 999)
 }
 
-func ParseTimestampToTime(timestamp int64) time.Time {
-	return time.Unix(timestamp, 0).Local()
+func ParseTimestampToTime(timestamp int64, location string) (time.Time, error) {
+	if location == "" {
+		location = "Local"
+	}
+	loc, err := time.LoadLocation(location)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(timestamp, 0).In(loc), nil
 }
 
-func ParseTimestrToTimestamp(timeStr string, flag int) int64 {
-	var t int64
-	loc, _ := time.LoadLocation("Local")
-	if flag == 1 {
-		t1, _ := time.ParseInLocation("2006.01.02 15:04:05", timeStr, loc)
-		t = t1.Unix()
-	} else if flag == 2 {
-		t1, _ := time.ParseInLocation("2006-01-02 15:04", timeStr, loc)
-		t = t1.Unix()
-	} else if flag == 3 {
-		t1, _ := time.ParseInLocation("2006-01-02", timeStr, loc)
-		t = t1.Unix()
-	} else if flag == 4 {
-		t1, _ := time.ParseInLocation("2006.01.02", timeStr, loc)
-		t = t1.Unix()
-	} else {
-		t1, _ := time.ParseInLocation("2006-01-02 15:04:05", timeStr, loc)
-		t = t1.Unix()
+func ParseStrToTimestamp(timeStr, location string, flag int) (int64, error) {
+	if location == "" {
+		location = "Local"
 	}
-	return t
+	var t int64
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return 0, err
+	}
+	switch flag {
+	case 1:
+		t1, err := time.ParseInLocation("2006.01.02 15:04:05", timeStr, loc)
+		t = t1.Unix()
+		return t, err
+	case 2:
+		t1, err := time.ParseInLocation("2006-01-02 15:04", timeStr, loc)
+		t = t1.Unix()
+		return t, err
+	case 3:
+		t1, err := time.ParseInLocation("2006-01-02", timeStr, loc)
+		t = t1.Unix()
+		return t, err
+	case 4:
+		t1, err := time.ParseInLocation("2006.01.02", timeStr, loc)
+		t = t1.Unix()
+		return t, err
+	default:
+		t1, err := time.ParseInLocation("2006-01-02 15:04:05", timeStr, loc)
+		t = t1.Unix()
+		return t, err
+	}
 }
 
 func ParseStrToTime(timeStr, location string, flag int) (time.Time, error) {
