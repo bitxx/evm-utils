@@ -63,6 +63,12 @@ func TestAccountWithPrivateKey(t *testing.T) {
 	require.Equal(t, account1.PublicKey, account2.PublicKey)
 }
 
+func TestAccountGenKeystore(t *testing.T) {
+	address, err := MyClient().AccountGenKeystore(testAccountFromAddressPrivateKey, "123456", "./keystore")
+	require.Nil(t, err)
+	t.Log(address)
+}
+
 func TestTokenBalance(t *testing.T) {
 	balance, err := MyClient().TokenBalanceOf(testAccountToAddress)
 	require.Nil(t, err)

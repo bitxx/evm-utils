@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/hex"
 	"github.com/bitxx/evm-utils/util"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
@@ -92,4 +93,32 @@ func (a *Account) AccountWithPrivateKey(privateKey string) (account *Account, er
 		Address:    address,
 	}
 	return
+}
+
+// AccountGenKeystore
+//
+//	@Description: 生成keystore文件
+//	@receiver a
+//	@param privateKey
+//	@param pwd
+//	@return address
+//	@return err
+func (a *Account) AccountGenKeystore(privateKey, pwd, path string) (address string, err error) {
+	priData, err := util.HexDecodeString(privateKey)
+	if err != nil {
+		return "", err
+	}
+
+	privateKeyECDSA, err := crypto.ToECDSA(priData)
+	if err != nil {
+		return "", err
+	}
+
+	ks := keystore.NewKeyStore(path, keystore.StandardScryptN, keystore.StandardScryptP)
+	acc, err := ks.ImportECDSA(privateKeyECDSA, pwd)
+	if err != nil {
+		return "", err
+	}
+	return acc.Address.Hex(), nil
+
 }

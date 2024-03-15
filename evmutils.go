@@ -53,6 +53,10 @@ func (o *EthClient) AccountWithPrivateKey(privateKey string) (account *model.Acc
 	return model.NewAccount().AccountWithPrivateKey(privateKey)
 }
 
+func (o *EthClient) AccountGenKeystore(privateKey, pwd, path string) (address string, err error) {
+	return model.NewAccount().AccountGenKeystore(privateKey, pwd, path)
+}
+
 func (o *EthClient) TokenBalanceOf(address string) (balance string, err error) {
 	chain, err := o.Chain()
 	if err != nil {
