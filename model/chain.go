@@ -24,7 +24,7 @@ type Chain struct {
 	RemoteRpcClient *ethclient.Client
 	Timeout         int64
 	rpcClient       *rpc.Client
-	chainId         *big.Int
+	ChainId         *big.Int
 	rpcUrl          string
 }
 
@@ -89,7 +89,7 @@ func newChain(rpcUrl string, timeout int64) (chain *Chain, err error) {
 	}
 
 	chain = &Chain{
-		chainId:         chainId,
+		ChainId:         chainId,
 		rpcClient:       rpcClient,
 		RemoteRpcClient: remoteRpcClient,
 		rpcUrl:          rpcUrl,
@@ -114,7 +114,7 @@ func (c *Chain) EstimateGasLimit(msg *types.CallMsg) (gas string, err error) {
 		gas = config.DefaultContractGasLimit
 	} else {
 		// nomal transfer
-		gas = config.DefaultEthGasLimit
+		gas = config.DefaultEvmGasLimit
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.Timeout)*time.Second)
@@ -174,7 +174,7 @@ func (c *Chain) BuildTxSign(privateKey *ecdsa.PrivateKey, txNoSign *eTypes.Trans
 		return nil, errors.New("param is empty")
 	}
 
-	signedTx, err := eTypes.SignTx(txNoSign, eTypes.LatestSignerForChainID(c.chainId), privateKey)
+	signedTx, err := eTypes.SignTx(txNoSign, eTypes.LatestSignerForChainID(c.ChainId), privateKey)
 	if err != nil {
 		return nil, err
 	}

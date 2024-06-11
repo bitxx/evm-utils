@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	//rpcUrl  = "https://pre-alpha-us-http-geth.opside.network"
-	rpcUrl  = "https://rpc.zkfair.io"
+	//rpcUrl = "https://rpc.zkfair.io"
+	rpcUrl  = "https://ethereum-holesky-rpc.publicnode.com"
 	timeout = 60 //second
 
 	testAccountFromAddress           = "0x7a547A149A79A03F4dd441B6806ffCBb1b63F383"
@@ -36,7 +36,7 @@ const (
 	privateKeyFile                   = "./privateKey.txt"
 )
 
-func MyClient() *EthClient {
+func MyClient() *EvmClient {
 	return NewEthClient(rpcUrl, timeout)
 }
 
@@ -111,16 +111,16 @@ func TestNonce(t *testing.T) {
 
 func TestTokenEstimateGasLimit(t *testing.T) {
 	value := "13000000000000000000"
-	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEthGasPrice, value, nil)
+	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEvmGasPrice, value, nil)
 	require.Nil(t, err)
 	t.Log("estimate gas limit: ", gasLimit)
 }
 
 func TestTokenTransfer(t *testing.T) {
 	value := "1000000000000000000"
-	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEthGasPrice, value, nil)
+	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, testAccountToAddress, config.DefaultEvmGasPrice, value, nil)
 	require.Nil(t, err)
-	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, "", config.DefaultEthGasPrice, gasLimit, "", value, testAccountToAddress, "")
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, "", config.DefaultEvmGasPrice, gasLimit, "", value, testAccountToAddress, "")
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
@@ -133,10 +133,10 @@ func TestTokenTransferWithContract(t *testing.T) {
 	value := "13000000000000000000"
 	contractAddress := "0xbd927011759b2c4f2602c3008f8ef3407db53473"
 	data := "73c45c98000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000540000000000000000000000000000000000000000000000000de0b6b3a764000000000000000000000000000000000000000000000000000000000000000000147a547a149a79a03f4dd441b6806ffcbb1b63f3830000000000000000000000000000000000000000000000000000000000000000000000000000000000000008a688906bd8b00000000000000000000000000000000000000000000000000000"
-	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, contractAddress, config.DefaultEthGasPrice, value, hexutils.HexToBytes(data))
+	gasLimit, err := MyClient().TokenEstimateGasLimit(testAccountFromAddress, contractAddress, config.DefaultEvmGasPrice, value, hexutils.HexToBytes(data))
 	require.Nil(t, err)
 
-	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, "", config.DefaultEthGasPrice, gasLimit, config.DefaultMaxPriorityFeePerGas, value, contractAddress, data)
+	hash, err := MyClient().TokenTransfer(testAccountFromAddressPrivateKey, "", config.DefaultEvmGasPrice, gasLimit, config.DefaultMaxPriorityFeePerGas, value, contractAddress, data)
 	require.Nil(t, err)
 	t.Log("hash:", hash)
 }
@@ -156,7 +156,7 @@ func TestBatchTokenTransferToManyAddress(t *testing.T) {
 		rValue := rand.Intn(45-2) + 2
 		total = total + rValue
 		value := strconv.Itoa(rValue) + "000000000000000000"
-		hash, err := client.TokenTransfer(privateKey, "", config.DefaultEthGasPrice, gasLimit, "", value, toAddress, "")
+		hash, err := client.TokenTransfer(privateKey, "", config.DefaultEvmGasPrice, gasLimit, "", value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d,toAddress: %s,error: %s", i, toAddress, err.Error()))
 			continue
@@ -180,7 +180,7 @@ func TestBatchTokenTransferToOneAddress(t *testing.T) {
 		if len(privateKey) <= 0 {
 			continue
 		}
-		hash, err := client.TokenTransfer(privateKey, "", config.DefaultEthGasPrice, gasLimit, "", value, toAddress, "")
+		hash, err := client.TokenTransfer(privateKey, "", config.DefaultEvmGasPrice, gasLimit, "", value, toAddress, "")
 		if err != nil {
 			t.Error(fmt.Sprintf("index:%d, error: %s", i, err.Error()))
 			continue
@@ -193,8 +193,8 @@ func TestMetamaskLoginSign(t *testing.T) {
 	url := "https://graphigo.prd.galaxy.eco/query"
 	privateKey := ""
 	//1. 获取账户
-	ethClient := NewSimpleEthClient()
-	account, err := ethClient.AccountWithPrivateKey(privateKey)
+	evmClient := NewSimpleEthClient()
+	account, err := evmClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 
 	//2. 生成未签名消息
@@ -211,7 +211,7 @@ func TestMetamaskLoginSign(t *testing.T) {
 	msg := fmt.Sprintf("galxe.com wants you to sign in with your Ethereum account:\n%s\n\nSign in with Ethereum to the app.\n\nURI: https://galxe.com\nVersion: %s\nChain ID: %s\nNonce: %s\nIssued At: %s\nExpiration Time: %s", account.Address, version, chainId, nonce, startTime, endTime)
 
 	//3. metamask消息签名
-	sign, err := ethClient.MetamaskSignLogin(msg, privateKey)
+	sign, err := evmClient.MetamaskSignLogin(msg, privateKey)
 	require.Nil(t, err)
 
 	//4. 请求提交galxe登录信息
@@ -247,9 +247,9 @@ func TestMetamaskLoginSign(t *testing.T) {
 
 func TestSignEip721(t *testing.T) {
 	loginUrl := "https://opside.network/api/user/custom/login"
-	ethClient := NewSimpleEthClient()
+	evmClient := NewSimpleEthClient()
 	privateKey := ""
-	account, err := ethClient.AccountWithPrivateKey(privateKey)
+	account, err := evmClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 	typedData := apitypes.TypedData{
 		Types: apitypes.Types{
@@ -274,7 +274,7 @@ func TestSignEip721(t *testing.T) {
 			"nonce":      idgenutil.IDNum(),
 		},
 	}
-	signature, err := ethClient.SignEip721(privateKey, &typedData)
+	signature, err := evmClient.SignEip721(privateKey, &typedData)
 	require.Nil(t, err)
 
 	data, err := json.Marshal(typedData.Map())
@@ -306,21 +306,11 @@ func TestSignEip721(t *testing.T) {
 	t.Log("token: ", token)
 }
 
-func TestTransactions(t *testing.T) {
-	transactions, err := MyClient().TxReceiptByBlockNumber(1)
+func TestTxs(t *testing.T) {
+	txs, err := MyClient().TxByBlockNumber(1000000)
 	require.Nil(t, err)
-	for idx, transaction := range transactions {
-		tx, err := json.Marshal(transaction)
-		require.Nil(t, err)
-		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(tx)))
-	}
-}
-
-func TestBlock(t *testing.T) {
-	block, err := MyClient().BlockByNumber(6301626)
-	require.Nil(t, err)
-	for idx, transaction := range block.Transactions() {
-		tx, err := transaction.MarshalJSON()
+	for idx, tx := range txs {
+		tx, err := json.Marshal(tx)
 		require.Nil(t, err)
 		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(tx)))
 	}
@@ -332,6 +322,51 @@ func TestLatestBlockNumber(t *testing.T) {
 	t.Log(number)
 }
 
+func TestTxByHash(t *testing.T) {
+	tx, err := MyClient().TxByHash("0xca80de96ff9d64c6894a3daca59d613ff391958599a50ee4ad8ad1d8220f3e06")
+	require.Nil(t, err)
+	t.Log(fmt.Sprintf("result: %s", tx.Hash))
+}
+
+func TestTokenErc20BalanceOf(t *testing.T) {
+	number, err := MyClient().TokenErc20BalanceOf(testAccountFromAddress, "0x3E4511645086a6fabECbAf1c3eE152C067f0AedA", nil)
+	require.Nil(t, err)
+	t.Log(number)
+}
+
+func TestIsPending(t *testing.T) {
+	isPending, err := MyClient().TxIsPending("0xca80de96ff9d64c6894a3daca59d613ff391958599a50ee4ad8ad1d8220f3e06")
+	require.Nil(t, err)
+	t.Log("pending status: ", isPending)
+}
+
+/*func TestApprove(t *testing.T) {
+	privateKey := ""
+	spenderAddress := ""
+	hash, err := MyClient().TokenErc20Approve(privateKey, spenderAddress, "80000000000000000000", "0x3E4511645086a6fabECbAf1c3eE152C067f0AedA", nil)
+	require.Nil(t, err)
+	t.Log("hash: ", hash)
+}
+
+func TestTokenErc20Approve(t *testing.T) {
+	hash, err := MyClient().TokenErc20Approve(testAccountFromAddress, "80000000000000000000", "0x3E4511645086a6fabECbAf1c3eE152C067f0AedA", nil)
+	require.Nil(t, err)
+	t.Log("hash: ", hash)
+	receipt, err := MyClient().TxReceipt(hash)
+
+	receipt.BlockHash.String()
+}*/
+
+/*func TestBlock(t *testing.T) {
+	block, err := MyClient().BlockByNumber(6301626)
+	require.Nil(t, err)
+	for idx, transaction := range block.Transactions() {
+		tx, err := transaction.MarshalJSON()
+		require.Nil(t, err)
+		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, string(tx)))
+	}
+}
+
 func TestBlockReceipts(t *testing.T) {
 	recipts, err := MyClient().BlockReceiptsByNumber(1)
 	require.Nil(t, err)
@@ -339,10 +374,4 @@ func TestBlockReceipts(t *testing.T) {
 		require.Nil(t, err)
 		t.Log(fmt.Sprintf("idx: %d, result: %s", idx, recipt.TxHash))
 	}
-}
-
-func TestTxReceipt(t *testing.T) {
-	recipt, err := MyClient().TxReceipt("0xb63c2503a348b2a501d89efbd519ff73d23de8b1886ad1b747faf6744d00cd98")
-	require.Nil(t, err)
-	t.Log(fmt.Sprintf("result: %s", recipt.TxHash))
-}
+}*/

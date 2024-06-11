@@ -16,9 +16,9 @@ import (
 
 func TestSignEip721(t *testing.T) {
 	loginUrl := "https://opside.network/api/user/custom/login"
-	ethClient := evmutils.NewEthClient("", 0)
+	evmClient := evmutils.NewEthClient("", 0)
 	privateKey := ""
-	account, err := ethClient.AccountWithPrivateKey(privateKey)
+	account, err := evmClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 	typedData := apitypes.TypedData{
 		Types: apitypes.Types{
@@ -79,8 +79,8 @@ func TestMetamaskLoginSign(t *testing.T) {
 	url := "https://graphigo.prd.galaxy.eco/query"
 	privateKey := ""
 	//1. 获取账户
-	ethClient := evmutils.NewEthClient("", 0)
-	account, err := ethClient.AccountWithPrivateKey(privateKey)
+	evmClient := evmutils.NewEthClient("", 0)
+	account, err := evmClient.AccountWithPrivateKey(privateKey)
 	require.Nil(t, err)
 
 	//2. 生成未签名消息
